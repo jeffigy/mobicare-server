@@ -46,4 +46,31 @@ const signup = async (req, res) => {
   });
 };
 
-export { getAllUsers, signup };
+const verifyEmail = async (req, res) => {
+  const { token } = req.params;
+
+  if (!token) {
+    return res.status(400).json({ message: "Token is required" });
+  }
+
+  const user = await User.findOne({
+    verificationToken: token,
+    verificationTokenExpiration: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res
+      .status(400)
+      .json({ message: "Verification token is invalid or has expired" });
+  }
+
+  user.verified = true;
+  user.verificationToken = undefined;
+  user.verificationTokenExpiration = undefined;
+
+  await user.save();
+
+  res.json(user);
+};
+
+export { getAllUsers, signup, verifyEmail };
