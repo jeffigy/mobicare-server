@@ -7,4 +7,7 @@ const MONGODB_URI =
     ? process.env.TEST_MONGODB_URI
     : process.env.MONGODB_URI;
 
-export { PORT, MONGODB_URI };
+const MAILER_USER = process.env.MAILER_USER;
+const MAILER_PASSWORD = process.env.MAILER_PASSWORD;
+const FRONTEND_URL = process.env.FRONTEND_URL;
+export { PORT, MONGODB_URI, MAILER_PASSWORD, MAILER_USER, FRONTEND_URL };
