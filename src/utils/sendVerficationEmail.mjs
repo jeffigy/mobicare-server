@@ -4,7 +4,7 @@ import { createTransport } from "nodemailer";
 const sendVerificationEmail = async (email, token) => {
   const verificationUrl = `${
     FRONTEND_URL ? FRONTEND_URL : "http://localhost:" + PORT
-  }/verify/${token}`;
+  }/auth/verify/${token}`;
 
   const transporter = createTransport({
     service: "Gmail",
