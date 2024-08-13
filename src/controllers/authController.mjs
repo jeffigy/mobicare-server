@@ -2,6 +2,8 @@ import User from "../models/User.mjs";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
 import sendVerificationEmail from "../utils/sendVerficationEmail.mjs";
+import jwt from "jsonwebtoken";
+import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../utils/config.mjs";
 
 const getAllUsers = async (req, res) => {
   const users = await User.find({}).exec();
@@ -70,7 +72,29 @@ const verifyEmail = async (req, res) => {
 
   await user.save();
 
-  res.json(user);
+  const accessToken = jwt.sign(
+    {
+      userInto: {
+        email: user.email,
+        roles: user.roles,
+      },
+    },
+    ACCESS_TOKEN_SECRET,
+    { expiresIn: "15m" }
+  );
+
+  const refreshToken = jwt.sign({ email: user.email }, REFRESH_TOKEN_SECRET, {
+    expiresIn: "7d",
+  });
+
+  res.cookie("jwt", refreshToken, {
+    httpOnly: true,
+    secure: true,
+    sameSite: "None",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  res.json({ accessToken });
 };
 
 export { getAllUsers, signup, verifyEmail };
