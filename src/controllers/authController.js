@@ -46,7 +46,7 @@ const signup = async (req, res) => {
 
   await sendVerificationEmail(newUser.email, verificationToken);
 
-  res.status(200).json({
+  res.status(201).json({
     message: `A verification email has been sent to ${newUser.email}.`,
   });
 };
