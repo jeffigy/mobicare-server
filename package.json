@@ -26,6 +26,6 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "globalTeardown": "./test/teardown.js"
+    "globalTeardown": "./src/test/teardown.js"
   }
 }
