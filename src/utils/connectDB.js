@@ -1,5 +1,5 @@
-import mongoose from "mongoose";
-import { MONGODB_URI } from "./config.mjs";
+const mongoose = require("mongoose");
+const { MONGODB_URI } = require("./config");
 
 const connectDB = async () => {
   try {
@@ -10,4 +10,4 @@ const connectDB = async () => {
   }
 };
 
-export default connectDB;
+module.exports = connectDB;

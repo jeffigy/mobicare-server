@@ -1,9 +1,12 @@
-import User from "../models/User.mjs";
-import bcrypt from "bcrypt";
-import crypto from "crypto";
-import sendVerificationEmail from "../utils/sendVerficationEmail.mjs";
-import jwt from "jsonwebtoken";
-import { ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET } from "../utils/config.mjs";
+const User = require("../models/User");
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
+const sendVerificationEmail = require("../utils/sendVerficationEmail");
+const jwt = require("jsonwebtoken");
+const {
+  ACCESS_TOKEN_SECRET,
+  REFRESH_TOKEN_SECRET,
+} = require("../utils/config");
 
 const getAllUsers = async (req, res) => {
   const users = await User.find({}).exec();
@@ -97,4 +100,4 @@ const verifyEmail = async (req, res) => {
   res.json({ accessToken });
 };
 
-export { getAllUsers, signup, verifyEmail };
+module.exports = { getAllUsers, signup, verifyEmail };

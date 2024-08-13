@@ -1,12 +1,17 @@
-import { MAILER_PASSWORD, MAILER_USER, FRONTEND_URL, PORT } from "./config.mjs";
-import { createTransport } from "nodemailer";
+const {
+  FRONTEND_URL,
+  MAILER_USER,
+  MAILER_PASSWORD,
+  PORT,
+} = require("./config");
+const nodemailer = require("nodemailer");
 
 const sendVerificationEmail = async (email, token) => {
   const verificationUrl = `${
     FRONTEND_URL ? FRONTEND_URL : "http://localhost:" + PORT
   }/auth/verify/${token}`;
 
-  const transporter = createTransport({
+  const transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
       user: MAILER_USER,
@@ -30,4 +35,4 @@ const sendVerificationEmail = async (email, token) => {
   await transporter.sendMail(mailOptions);
 };
 
-export default sendVerificationEmail;
+module.exports = sendVerificationEmail;

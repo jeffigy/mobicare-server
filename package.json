@@ -1,11 +1,10 @@
 {
   "name": "mobicare-server",
   "version": "1.0.0",
-  "main": "server.mjs",
+  "main": "server.js",
   "license": "MIT",
-  "type": "module",
   "scripts": {
-    "dev": "nodemon server.mjs"
+    "dev": "nodemon server.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

@@ -9,4 +9,4 @@ const transformToJSON = (schema) => {
   });
 };
 
-export { transformToJSON };
+module.exports = { transformToJSON };

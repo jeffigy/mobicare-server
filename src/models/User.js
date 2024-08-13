@@ -1,5 +1,5 @@
-import { model, Schema } from "mongoose";
-import { transformToJSON } from "../utils/mongooseUtils.mjs";
+const { model, Schema } = require("mongoose");
+const { transformToJSON } = require("../utils/mongooseUtils");
 
 const userSchema = new Schema({
   email: String,
@@ -19,6 +19,4 @@ const userSchema = new Schema({
 
 transformToJSON(userSchema);
 
-const User = model("User", userSchema);
-
-export default User;
+module.exports = model("User", userSchema);

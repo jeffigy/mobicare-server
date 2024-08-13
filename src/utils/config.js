@@ -1,5 +1,4 @@
-import { config } from "dotenv";
-config();
+require("dotenv").config();
 
 const PORT = process.env.PORT || 3000;
 const MONGODB_URI =
@@ -13,7 +12,7 @@ const FRONTEND_URL = process.env.FRONTEND_URL;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
 
-export {
+module.exports = {
   PORT,
   MONGODB_URI,
   MAILER_PASSWORD,
