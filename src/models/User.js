@@ -8,7 +8,10 @@ const userSchema = new Schema({
     type: [String],
     default: ["User"],
   },
-  active: Boolean,
+  active: {
+    type: Boolean,
+    default: true,
+  },
   verified: {
     type: Boolean,
     default: false,
