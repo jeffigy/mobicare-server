@@ -82,6 +82,82 @@ describe("Verifying email", () => {
   });
 });
 
+describe("Logging in", () => {
+  test("fails with missing email", async () => {
+    await api
+      .post("/auth/login")
+      .send({ email: "", password: "asdf" })
+      .expect(400);
+  });
+
+  test("fails with missing password", async () => {
+    await api
+      .post("/auth/login")
+      .send({ email: "johndoe@gmail.com", password: "" })
+      .expect(400);
+  });
+
+  test("fails with email not exist", async () => {
+    await api
+      .post("/auth/login")
+      .send({ email: "notexisting@mail.com", password: "samplepassword" })
+      .expect(401);
+  });
+
+  test("fails if account is not active", async () => {
+    await api
+      .post("/auth/login")
+      .send({
+        email: "carol.davis@example.com",
+        password: "C@rolD@v1s",
+      })
+      .expect(401);
+  });
+
+  test("fails when user enters wrong password", async () => {
+    await api
+      .post("/auth/login")
+      .send({ email: "bob.smith@example.com", password: "B0bSm1th2023" })
+      .expect(401);
+  });
+
+  test("fails when user logs in with an unverified account", async () => {
+    await api
+      .post("/auth/login")
+      .send({ email: "alice.johnson@example.com", password: "AliCESmiTH2024" })
+      .expect(401);
+  });
+
+  test("succeeds on generating new token, if its already expired", async () => {
+    const usersAtStart = await usersInDb();
+    const userAtStart = usersAtStart.find(
+      (user) => user.email === "dave.wilson@example.com"
+    );
+
+    await api
+      .post("/auth/login")
+      .send({ email: "dave.wilson@example.com", password: "D4veW1ls0n!" })
+      .expect(401);
+
+    const usersAtEnd = await usersInDb();
+    const userAtEnd = usersAtEnd.find(
+      (user) => user.email === "dave.wilson@example.com"
+    );
+
+    expect(userAtStart.verificationToken).not.toEqual(
+      userAtEnd.verificationToken
+    );
+  });
+
+  test("succeeds with correct credentials", async () => {
+    await api
+      .post("/auth/login")
+      .send({ email: "bob.smith@example.com", password: "B0bSm1th2024" })
+      .expect(200)
+      .expect("Content-Type", /application\/json/);
+  });
+});
+
 afterAll(async () => {
   await mongoose.connection.close();
 });

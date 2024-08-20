@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const sendVerificationEmail = require("../utils/sendVerficationEmail");
 const jwt = require("jsonwebtoken");
+
 const {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
@@ -100,4 +101,75 @@ const verifyEmail = async (req, res) => {
   res.json({ accessToken });
 };
 
-module.exports = { getAllUsers, signup, verifyEmail };
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: "Email and password are required" });
+  }
+
+  const foundUser = await User.findOne({ email }).exec();
+
+  if (!foundUser) {
+    return res.status(401).json({ message: "Incorrect email or password" });
+  }
+
+  if (foundUser && !foundUser.active) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  const matchPwd = await bcrypt.compare(password, foundUser.password);
+
+  if (!matchPwd) {
+    return res.status(401).json({ message: "Incorrect email or password" });
+  }
+
+  if (!foundUser.verified) {
+    if (Date.now() > foundUser.verificationTokenExpiration) {
+      const verificationToken = crypto.randomBytes(32).toString("hex");
+      foundUser.verificationToken = verificationToken;
+      foundUser.verificationTokenExpiration = Date.now() + 24 * 60 * 60 * 1000;
+
+      await foundUser.save();
+
+      await sendVerificationEmail(foundUser.email, verificationToken);
+
+      return res.status(401).json({
+        message: "A new verification link has been sent to your email",
+      });
+    }
+
+    return res.status(401).json({
+      message:
+        "A verification link has already been sent. Please check your email.",
+    });
+  }
+
+  const accessToken = jwt.sign(
+    {
+      UserInfo: {
+        email: foundUser.email,
+        roles: foundUser.roles,
+      },
+    },
+    ACCESS_TOKEN_SECRET,
+    { expiresIn: "15m" }
+  );
+
+  const refreshToken = jwt.sign(
+    { email: foundUser.email },
+    REFRESH_TOKEN_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  res.cookie("jwt", refreshToken, {
+    httpOnly: true,
+    seure: true,
+    sameSite: "None",
+    mageAge: 7 * 24 * 60 * 60 * 1000,
+  });
+
+  res.json({ accessToken });
+};
+
+module.exports = { getAllUsers, signup, verifyEmail, login };
