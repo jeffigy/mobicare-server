@@ -172,4 +172,45 @@ const login = async (req, res) => {
   res.json({ accessToken });
 };
 
-module.exports = { getAllUsers, signup, verifyEmail, login };
+const refresh = async (req, res) => {
+  const cookies = req.cookies;
+
+  if (!cookies?.jwt) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (error, decoded) => {
+    if (error) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
+
+    const foundUser = await User.findOne({ email: decoded.email }).exec();
+
+    if (!foundUser) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const accessToken = jwt.sign(
+      {
+        UserInfo: {
+          email: foundUser.email,
+          roles: foundUser.roles,
+        },
+      },
+      ACCESS_TOKEN_SECRET,
+      { expiresIn: "15m" }
+    );
+    res.json({ accessToken });
+  });
+};
+
+const logout = (req, res) => {
+  const cookies = req.cookies;
+  if (!cookies?.jwt) {
+    return res.sendStatus(204);
+  }
+  res.clearCookie("jwt", { httpOnly: true, sameSite: "None", secure: true });
+  res.json({ message: "Cookie cleard" });
+};
+
+module.exports = { getAllUsers, signup, verifyEmail, login, refresh, logout };
