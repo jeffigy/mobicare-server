@@ -3,6 +3,8 @@ const {
   signup,
   verifyEmail,
   login,
+  refresh,
+  logout,
 } = require("../controllers/authController");
 const authRoutes = require("express").Router();
 
