@@ -1,5 +1,15 @@
 const Repair = require("../models/Repair");
 
+const getAllRepairs = async (req, res) => {
+  const repairs = await Repair.find({}).exec();
+
+  if (!repairs) {
+    return res.status(400).json({ messgae: "No Entry found" });
+  }
+
+  res.json(repairs);
+};
+
 const newRepair = async (req, res) => {
   const {
     customer: { name, number, email },
@@ -52,4 +62,81 @@ const newRepair = async (req, res) => {
   }
 };
 
-module.exports = { newRepair };
+const updateRepair = async (req, res) => {
+  const {
+    id,
+    customer: { name, number, email },
+    device: { type, brand, model, imeiOrSerialNumber },
+    problemDescription: { issueCategory, details },
+    status,
+  } = req.body;
+
+  if (
+    !id ||
+    !name ||
+    !number ||
+    !email ||
+    !type ||
+    !brand ||
+    !model ||
+    !imeiOrSerialNumber ||
+    !issueCategory ||
+    !details
+  ) {
+    return res.status(400).json({ message: "Some inputs are missing" });
+  }
+
+  const repair = await Repair.findById(id).exec();
+  if (!repair) {
+    return res.status(404).json({ message: "Repair entry not found" });
+  }
+
+  const duplicate = await Repair.findOne({
+    _id: { $ne: id },
+    "customer.email": email,
+    "device.imeiOrSerialNumber": imeiOrSerialNumber,
+    status: "pending",
+  });
+
+  if (duplicate) {
+    return res
+      .status(409)
+      .json({ message: "Duplicate entry found with pending status." });
+  }
+
+  const updatedRepair = await Repair.findByIdAndUpdate(id, {
+    customer: { name, number, email },
+    device: { type, brand, model, imeiOrSerialNumber },
+    problemDescription: { issueCategory, details },
+    status,
+  });
+
+  if (!updatedRepair) {
+    return res
+      .status(500)
+      .json({ message: "Failed to update the repair entry" });
+  }
+
+  return res.status(200).json({
+    message: "Repair entry updated successfully",
+  });
+};
+
+const deleteRepair = async (req, res) => {
+  const { id } = req.body;
+  if (!id) {
+    return res.status(400).json({ message: "id is required" });
+  }
+
+  const repair = await Repair.findById(id).exec();
+
+  if (!repair) {
+    return res.status(400).json({ message: "Entry not found" });
+  }
+
+  await repair.deleteOne();
+
+  res.json({ message: "Entry deleted" });
+};
+
+module.exports = { getAllRepairs, newRepair, updateRepair, deleteRepair };

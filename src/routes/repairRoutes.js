@@ -1,6 +1,16 @@
 const repairRoutes = require("express").Router();
-const { newRepair } = require("../controllers/repairController");
+const {
+  newRepair,
+  getAllRepairs,
+  updateRepair,
+  deleteRepair,
+} = require("../controllers/repairController");
 
-repairRoutes.route("/").post(newRepair);
+repairRoutes
+  .route("/")
+  .get(getAllRepairs)
+  .post(newRepair)
+  .patch(updateRepair)
+  .delete(deleteRepair);
 
 module.exports = repairRoutes;
