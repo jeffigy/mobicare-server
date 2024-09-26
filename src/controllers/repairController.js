@@ -4,10 +4,22 @@ const getAllRepairs = async (req, res) => {
   const repairs = await Repair.find({}).exec();
 
   if (!repairs) {
-    return res.status(400).json({ messgae: "No Entry found" });
+    return res.status(400).json({ messgae: "No Entries found" });
   }
 
   res.json(repairs);
+};
+
+const getRepair = async (req, res) => {
+  const { id } = req.params;
+
+  const repair = await Repair.findById(id).exec();
+
+  if (!repair) {
+    return res.status(400).json({ message: "Entry not found" });
+  }
+
+  res.json(repair);
 };
 
 const newRepair = async (req, res) => {
@@ -139,4 +151,10 @@ const deleteRepair = async (req, res) => {
   res.json({ message: "Entry deleted" });
 };
 
-module.exports = { getAllRepairs, newRepair, updateRepair, deleteRepair };
+module.exports = {
+  getAllRepairs,
+  getRepair,
+  newRepair,
+  updateRepair,
+  deleteRepair,
+};
