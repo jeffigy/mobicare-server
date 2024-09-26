@@ -11,6 +11,9 @@ const MAILER_PASSWORD = process.env.MAILER_PASSWORD;
 const FRONTEND_URL = process.env.FRONTEND_URL;
 const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET;
 const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET;
+const CORS_WHITELIST = process.env.CORS_WHITELIST
+  ? process.env.CORS_WHITELIST.split(",")
+  : [];
 
 module.exports = {
   PORT,
@@ -20,4 +23,5 @@ module.exports = {
   FRONTEND_URL,
   REFRESH_TOKEN_SECRET,
   ACCESS_TOKEN_SECRET,
+  CORS_WHITELIST,
 };

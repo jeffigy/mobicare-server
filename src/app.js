@@ -5,13 +5,13 @@ const express = require("express");
 const authRoutes = require("./routes/authRoutes");
 const repairRoutes = require("./routes/repairRoutes");
 const connectDB = require("./utils/connectDB");
-
+const corsOptions = require("./utils/corsOptions");
 connectDB();
 
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(cookieParser());
 
 app.use("/auth", authRoutes);
