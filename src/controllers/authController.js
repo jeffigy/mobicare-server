@@ -18,6 +18,19 @@ const getAllUsers = async (req, res) => {
   res.json(users);
 };
 
+const getUserProfile = async (req, res) => {
+  const { email } = req.query;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+  const user = await User.findOne({ email }).exec();
+  if (!user) {
+    return res.status(404).json({ message: "User not found " });
+  }
+  res.json(user);
+};
+
 const signup = async (req, res) => {
   const { email, password } = req.body;
 
@@ -213,4 +226,12 @@ const logout = (req, res) => {
   res.json({ message: "Cookie cleard" });
 };
 
-module.exports = { getAllUsers, signup, verifyEmail, login, refresh, logout };
+module.exports = {
+  getAllUsers,
+  getUserProfile,
+  signup,
+  verifyEmail,
+  login,
+  refresh,
+  logout,
+};
