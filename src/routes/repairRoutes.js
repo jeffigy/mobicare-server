@@ -4,19 +4,12 @@ const {
   getAllRepairs,
   updateRepair,
   deleteRepair,
-  getRepair,
 } = require("../controllers/repairController");
 const verifyJWT = require("../middleware/verifyJWT");
 
 repairRoutes.use(verifyJWT);
 
-repairRoutes
-  .route("/")
-  .get(getAllRepairs)
-  .post(newRepair)
-  .patch(updateRepair)
-  .delete(deleteRepair);
+repairRoutes.route("/").get(getAllRepairs).post(newRepair).patch(updateRepair);
 
-repairRoutes.route("/:id").get(getRepair);
-
+repairRoutes.route("/:id").delete(deleteRepair);
 module.exports = repairRoutes;

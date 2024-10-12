@@ -10,18 +10,6 @@ const getAllRepairs = async (req, res) => {
   res.json(repairs);
 };
 
-const getRepair = async (req, res) => {
-  const { id } = req.params;
-
-  const repair = await Repair.findById(id).exec();
-
-  if (!repair) {
-    return res.status(400).json({ message: "Entry not found" });
-  }
-
-  res.json(repair);
-};
-
 const newRepair = async (req, res) => {
   const {
     customer: { name, number, email },
@@ -135,7 +123,8 @@ const updateRepair = async (req, res) => {
 };
 
 const deleteRepair = async (req, res) => {
-  const { id } = req.body;
+  const { id } = req.params;
+
   if (!id) {
     return res.status(400).json({ message: "id is required" });
   }
@@ -148,12 +137,11 @@ const deleteRepair = async (req, res) => {
 
   await repair.deleteOne();
 
-  res.json({ message: "Entry deleted" });
+  return res.status(200).json({ message: "Entry deleted" });
 };
 
 module.exports = {
   getAllRepairs,
-  getRepair,
   newRepair,
   updateRepair,
   deleteRepair,
