@@ -101,7 +101,7 @@ const verifyEmail = async (req, res) => {
   );
 
   const refreshToken = jwt.sign({ email: user.email }, REFRESH_TOKEN_SECRET, {
-    expiresIn: "7d",
+    expiresIn: "30d",
   });
 
   res.cookie("jwt", refreshToken, {
