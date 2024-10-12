@@ -9,15 +9,6 @@ const {
   REFRESH_TOKEN_SECRET,
 } = require("../utils/config");
 
-const getAllUsers = async (req, res) => {
-  const users = await User.find({}).exec();
-  if (users.length === 0) {
-    return res.status(400).json({ message: "No users found" });
-  }
-
-  res.json(users);
-};
-
 const getUserProfile = async (req, res) => {
   const { email } = req.query;
 
@@ -229,7 +220,6 @@ const logout = (req, res) => {
 };
 
 module.exports = {
-  getAllUsers,
   getUserProfile,
   signup,
   verifyEmail,
