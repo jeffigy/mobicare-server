@@ -177,9 +177,9 @@ const login = async (req, res) => {
 
   res.cookie("jwt", refreshToken, {
     httpOnly: true,
-    seure: true,
+    secure: true,
     sameSite: "None",
-    mageAge: 7 * 24 * 60 * 60 * 1000,
+    maxAge: 7 * 24 * 60 * 60 * 1000,
   });
 
   res.json({ accessToken });
