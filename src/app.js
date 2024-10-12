@@ -7,6 +7,7 @@ const repairRoutes = require("./routes/repairRoutes");
 const connectDB = require("./utils/connectDB");
 const corsOptions = require("./utils/corsOptions");
 const morgan = require("./middleware/morgan");
+const userRoutes = require("./routes/userRoutes");
 
 connectDB();
 
@@ -18,5 +19,5 @@ app.use(cookieParser());
 
 app.use("/auth", authRoutes);
 app.use("/repairs", repairRoutes);
-
+app.use("/users", userRoutes);
 module.exports = app;
