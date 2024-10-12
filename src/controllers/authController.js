@@ -172,7 +172,7 @@ const login = async (req, res) => {
   const refreshToken = jwt.sign(
     { email: foundUser.email },
     REFRESH_TOKEN_SECRET,
-    { expiresIn: "7d" }
+    { expiresIn: "30d" }
   );
 
   res.cookie("jwt", refreshToken, {
