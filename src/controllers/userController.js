@@ -49,4 +49,28 @@ const newUser = async (req, res) => {
   });
 };
 
-module.exports = { getAllUsers, newUser };
+const editUser = async (req, res) => {
+  const { id, roles, active } = req.body;
+
+  if (!roles.length || typeof active !== "boolean") {
+    return res
+      .status(400)
+      .json({ message: "Roles, and Account status are required" });
+  }
+
+  const user = await User.findById(id).exec();
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  user.roles = roles;
+  user.active = active;
+
+  const updatedUser = await user.save();
+  res
+    .status(200)
+    .json({ message: `User with email ${updatedUser.email} updated` });
+};
+
+module.exports = { getAllUsers, newUser, editUser };
