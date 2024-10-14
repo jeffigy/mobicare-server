@@ -1,5 +1,4 @@
 const {
-  signup,
   verifyEmail,
   login,
   refresh,
@@ -9,7 +8,6 @@ const {
 const authRoutes = require("express").Router();
 
 authRoutes.route("/profile").get(getUserProfile);
-authRoutes.route("/signup").post(signup);
 authRoutes.route("/verify/:token?").get(verifyEmail);
 authRoutes.route("/login").post(login);
 authRoutes.route("/refresh").get(refresh);

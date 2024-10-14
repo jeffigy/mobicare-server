@@ -22,40 +22,6 @@ const getUserProfile = async (req, res) => {
   res.json(user);
 };
 
-const signup = async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return res.status(400).json({ message: "Email and password are required" });
-  }
-
-  const duplicateEmail = await User.findOne({ email })
-    .collation({ locale: "en", strength: 2 })
-    .lean()
-    .exec();
-
-  if (duplicateEmail) {
-    return res.status(409).json({ message: "Email already exists" });
-  }
-
-  const hashedPwd = await bcrypt.hash(password, 10);
-  const verificationToken = crypto.randomBytes(32).toString("hex");
-  const verificationTokenExpiration = Date.now() + 24 * 60 * 60 * 1000;
-
-  const newUser = await User.create({
-    email,
-    password: hashedPwd,
-    verificationToken,
-    verificationTokenExpiration,
-  });
-
-  await sendVerificationEmail(newUser.email, verificationToken);
-
-  res.status(201).json({
-    message: `A verification email has been sent to ${newUser.email}.`,
-  });
-};
-
 const verifyEmail = async (req, res) => {
   const { token } = req.params;
 
@@ -221,7 +187,6 @@ const logout = (req, res) => {
 
 module.exports = {
   getUserProfile,
-  signup,
   verifyEmail,
   login,
   refresh,
