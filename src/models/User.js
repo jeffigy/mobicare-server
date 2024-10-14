@@ -4,9 +4,10 @@ const { transformToJSON } = require("../utils/mongooseUtils");
 const userSchema = new Schema({
   email: String,
   password: String,
+  name: String,
   roles: {
     type: [String],
-    default: ["User"],
+    default: ["user"],
   },
   active: {
     type: Boolean,
