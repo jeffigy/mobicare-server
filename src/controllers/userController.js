@@ -4,7 +4,8 @@ const crypto = require("crypto");
 const sendVerificationEmail = require("../utils/sendVerficationEmail");
 
 const getAllUsers = async (req, res) => {
-  const users = await User.find({}).exec();
+  const { email } = req.query;
+  const users = await User.find({ email: { $ne: email } }).exec();
   if (users.length === 0) {
     return res.status(400).json({ message: "No users found" });
   }
