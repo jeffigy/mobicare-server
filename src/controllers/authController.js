@@ -22,6 +22,24 @@ const getUserProfile = async (req, res) => {
   res.json(user);
 };
 
+const updateUserProfileName = async (req, res) => {
+  const { name, id } = req.body;
+
+  if (!name) {
+    return res.status(400).json({ message: "Name is required" });
+  }
+
+  const user = await User.findById(id).exec();
+
+  if (!user) {
+    return res.status(404).json({ message: "User not found" });
+  }
+
+  user.name = name;
+  await user.save();
+  return res.status(200).json({ message: "Name successfully updated" });
+};
+
 const verifyEmail = async (req, res) => {
   const { token } = req.params;
 
@@ -192,4 +210,5 @@ module.exports = {
   login,
   refresh,
   logout,
+  updateUserProfileName,
 };
