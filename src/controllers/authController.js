@@ -105,13 +105,14 @@ const login = async (req, res) => {
       await sendVerificationEmail(foundUser.email, verificationToken);
 
       return res.status(401).json({
-        message: "A new verification link has been sent to your email",
+        message:
+          "Account not verified. A new verification link has been sent to your email",
       });
     }
 
     return res.status(401).json({
       message:
-        "A verification link has already been sent. Please check your email.",
+        "Account not verified. A verification link has already been sent. Please check your email.",
     });
   }
 
