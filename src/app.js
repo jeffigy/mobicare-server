@@ -8,6 +8,7 @@ const connectDB = require("./utils/connectDB");
 const corsOptions = require("./utils/corsOptions");
 const morgan = require("./middleware/morgan");
 const userRoutes = require("./routes/userRoutes");
+const profileRoutes = require("./routes/profileRoutes");
 
 connectDB();
 
@@ -20,4 +21,5 @@ app.use(cookieParser());
 app.use("/auth", authRoutes);
 app.use("/repairs", repairRoutes);
 app.use("/users", userRoutes);
+app.use("/profile", profileRoutes);
 module.exports = app;

@@ -17,6 +17,14 @@ const userSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  imagePublicId: {
+    type: String,
+    required: false,
+  },
+  imageUrl: {
+    type: String,
+    required: false,
+  },
   verificationToken: String,
   verificationTokenExpiration: Date,
 });
