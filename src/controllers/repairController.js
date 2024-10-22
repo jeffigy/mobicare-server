@@ -1,13 +1,22 @@
 const Repair = require("../models/Repair");
 
 const getAllRepairs = async (req, res) => {
-  const repairs = await Repair.find({}).exec();
+  const { page = 1, limit = 5 } = req.query;
+  const skip = (page - 1) * limit;
+
+  const repairs = await Repair.find({}).skip(skip).limit(parseInt(limit));
 
   if (!repairs) {
     return res.status(400).json({ messgae: "No Entries found" });
   }
 
-  res.json(repairs);
+  const total = await Repair.countDocuments();
+  res.json({
+    items: repairs,
+    total,
+    page: parseInt(page),
+    limit: parseInt(limit),
+  });
 };
 
 const newRepair = async (req, res) => {
