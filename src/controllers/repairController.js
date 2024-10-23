@@ -1,16 +1,56 @@
 const Repair = require("../models/Repair");
 
 const getAllRepairs = async (req, res) => {
-  const { page = 1, limit = 5 } = req.query;
+  const {
+    page = 1,
+    limit = 10,
+    search = "",
+    sortDate = "desc",
+    status = [],
+  } = req.query;
   const skip = (page - 1) * limit;
 
-  const repairs = await Repair.find({}).skip(skip).limit(parseInt(limit));
+  const searchQuery = search
+    ? {
+        $or: [
+          {
+            "customer.name": {
+              $regex: search.split(" ").join("|"),
+              $options: "i",
+            },
+          },
+          {
+            "device.model": {
+              $regex: search.split(" ").join("|"),
+              $options: "i",
+            },
+          },
+        ],
+      }
+    : {};
+
+  const statusQuery = status.length
+    ? { status: { $in: status.split(",") } }
+    : {};
+
+  const query = {
+    ...searchQuery,
+    ...statusQuery,
+  };
+
+  const sortDateOrder = sortDate === "asc" ? 1 : -1;
+
+  const repairs = await Repair.find(query)
+    .sort({ createdAt: sortDateOrder })
+    .skip(skip)
+    .limit(parseInt(limit));
 
   if (!repairs) {
-    return res.status(400).json({ messgae: "No Entries found" });
+    return res.status(400).json({ message: "No Entries found" });
   }
 
-  const total = await Repair.countDocuments();
+  const total = await Repair.countDocuments(searchQuery);
+
   res.json({
     items: repairs,
     total,
