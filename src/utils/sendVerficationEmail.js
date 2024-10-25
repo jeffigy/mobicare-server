@@ -6,10 +6,10 @@ const {
 } = require("./config");
 const nodemailer = require("nodemailer");
 
-const sendVerificationEmail = async (email, token) => {
-  const verificationUrl = `${
-    FRONTEND_URL ? FRONTEND_URL : "http://localhost:" + PORT
-  }/auth/verify/${token}`;
+const sendVerificationEmail = async (email, subject, text, html, url) => {
+  const verificationUrl = FRONTEND_URL
+    ? FRONTEND_URL + url
+    : `http://localhost:${PORT + url}`;
 
   const transporter = nodemailer.createTransport({
     service: "Gmail",
@@ -22,11 +22,11 @@ const sendVerificationEmail = async (email, token) => {
   const mailOptions = {
     to: email,
     from: `"MobiCare" <${MAILER_USER}>`,
-    subject: "Email Verification",
-    text: `Please verify your email by clicking the following link: ${verificationUrl}`,
+    subject: subject,
+    text: `${text} ${verificationUrl}`,
     html: `
       <p>
-        Thank you for registering with MobiCare. Please verify your email by clicking the following link: 
+        ${html}
         <a href="${verificationUrl}">Link</a>
       </p>
     `,

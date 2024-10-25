@@ -43,7 +43,13 @@ const newUser = async (req, res) => {
     roles,
   });
 
-  await sendVerificationEmail(newUser.email, verificationToken);
+  await sendVerificationEmail(
+    newUser.email,
+    "Email Verification",
+    "Please verify your email by clicking the following link:",
+    "Thank you for registering with MobiCare. Please verify your email by clicking the following link:",
+    `/auth/verify/${verificationToken}`
+  );
 
   res.status(201).json({
     message: `A verification email has been sent to ${newUser.email}.`,

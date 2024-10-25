@@ -27,6 +27,14 @@ const userSchema = new Schema({
   },
   verificationToken: String,
   verificationTokenExpiration: Date,
+  passwordResetToken: {
+    type: String,
+    required: false,
+  },
+  passwordResetTokenExpiration: {
+    type: Date,
+    required: false,
+  },
 });
 
 transformToJSON(userSchema);

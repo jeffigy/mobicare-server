@@ -19,7 +19,7 @@ const verifyEmail = async (req, res) => {
   const user = await User.findOne({
     verificationToken: token,
     verificationTokenExpiration: { $gt: Date.now() },
-  });
+  }).exec();
 
   if (!user) {
     return res
@@ -32,10 +32,9 @@ const verifyEmail = async (req, res) => {
   user.verificationTokenExpiration = undefined;
 
   await user.save();
-
   const accessToken = jwt.sign(
     {
-      userInto: {
+      UserInfo: {
         email: user.email,
         roles: user.roles,
       },
@@ -89,7 +88,13 @@ const login = async (req, res) => {
 
       await foundUser.save();
 
-      await sendVerificationEmail(foundUser.email, verificationToken);
+      await sendVerificationEmail(
+        foundUser.email,
+        "Email Verification",
+        "Please verify your email by clicking the following link:",
+        "Thank you for registering with MobiCare. Please verify your email by clicking the following link:",
+        `/auth/verify/${verificationToken}`
+      );
 
       return res.status(401).json({
         message:
@@ -173,9 +178,83 @@ const logout = (req, res) => {
   res.json({ message: "Cookie cleard" });
 };
 
+const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+
+  const user = await User.findOne({ email }).exec();
+
+  if (!user) {
+    return res
+      .status(404)
+      .json({ message: "This email is not associated with any account" });
+  }
+
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  user.passwordResetToken = resetToken;
+  user.passwordResetTokenExpiration = Date.now() + 3600000;
+
+  await user.save();
+
+  await sendVerificationEmail(
+    user.email,
+    "Reset Email",
+    "reset you password by clicking the link: ",
+    "To reset the password of your account please click the following link: ",
+    `/auth/reset-password/${resetToken}`
+  );
+
+  return res.json({ message: "Reset link was sent to your email" });
+};
+
+const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password, confirmPassword } = req.body;
+  console.log({ token });
+
+  if (!token) {
+    return res.status(400).json({ message: "Token is required" });
+  }
+
+  if (!password || !confirmPassword) {
+    return res.status(400).json({ message: "All fields are required" });
+  }
+
+  if (password !== confirmPassword) {
+    return res.status(400).json({ message: "passwords do not match" });
+  }
+
+  const user = await User.findOne({
+    passwordResetToken: token,
+    passwordResetTokenExpiration: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res
+      .status(400)
+      .json({ message: "Reset password token is invalid or has expired" });
+  }
+
+  const hashedPwd = await bcrypt.hash(password, 10);
+
+  user.password = hashedPwd;
+  user.passwordResetToken = undefined;
+  user.passwordResetTokenExpiration = undefined;
+
+  await user.save();
+
+  res.json({ message: "Password successfully reset" });
+};
+
 module.exports = {
   verifyEmail,
   login,
   refresh,
   logout,
+  forgotPassword,
+  resetPassword,
 };
