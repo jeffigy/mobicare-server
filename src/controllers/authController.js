@@ -50,7 +50,7 @@ const verifyEmail = async (req, res) => {
   res.cookie("jwt", refreshToken, {
     httpOnly: true,
     secure: true,
-    sameSite: "None",
+    sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000,
     domain: "mobicare-client-cra.onrender.com",
   });
@@ -129,7 +129,7 @@ const login = async (req, res) => {
   res.cookie("jwt", refreshToken, {
     httpOnly: true,
     secure: true,
-    sameSite: "None",
+    sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000,
     domain: "mobicare-client-cra.onrender.com",
   });
