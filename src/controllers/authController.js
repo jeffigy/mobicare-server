@@ -8,6 +8,7 @@ const {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
 } = require("../utils/config");
+const path = require("path");
 
 const verifyEmail = async (req, res) => {
   const { token } = req.params;
@@ -52,7 +53,7 @@ const verifyEmail = async (req, res) => {
     secure: true,
     sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    domain: "mobicare-client-cra.onrender.com",
+    domain: ".onrender.com",
   });
 
   res.json({ accessToken });
@@ -127,11 +128,12 @@ const login = async (req, res) => {
   );
 
   res.cookie("jwt", refreshToken, {
+    path: "/",
     httpOnly: true,
     secure: true,
     sameSite: "none",
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    domain: "mobicare-client-cra.onrender.com",
+    domain: ".onrender.com",
   });
 
   res.json({ accessToken });

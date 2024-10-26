@@ -13,10 +13,11 @@ const profileRoutes = require("./routes/profileRoutes");
 connectDB();
 
 const app = express();
+app.set("trust proxy", 1);
 app.use(morgan);
 app.use(express.json());
-app.use(cors(corsOptions));
 app.use(cookieParser());
+app.use(cors(corsOptions));
 
 app.use("/auth", authRoutes);
 app.use("/repairs", repairRoutes);
