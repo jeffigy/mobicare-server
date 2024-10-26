@@ -52,7 +52,7 @@ const verifyEmail = async (req, res) => {
     secure: true,
     sameSite: "None",
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    domain: ".onrender.com",
+    domain: "mobicare-client-cra.onrender.com",
   });
 
   res.json({ accessToken });
@@ -131,7 +131,7 @@ const login = async (req, res) => {
     secure: true,
     sameSite: "None",
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    domain: ".onrender.com",
+    domain: "mobicare-client-cra.onrender.com",
   });
 
   res.json({ accessToken });
