@@ -142,7 +142,7 @@ const login = async (req, res) => {
 
 const refresh = (req, res) => {
   const cookies = req.cookies;
-
+  console.log(cookies?.jwt);
   if (!cookies?.jwt) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -176,6 +176,7 @@ const refresh = (req, res) => {
 
 const logout = (req, res) => {
   const cookies = req.cookies;
+
   if (!cookies?.jwt) {
     return res.sendStatus(204);
   }
