@@ -51,9 +51,8 @@ const verifyEmail = async (req, res) => {
   res.cookie("jwt", refreshToken, {
     httpOnly: true,
     secure: true,
-    sameSite: "none",
+    sameSite: "None",
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    domain: ".onrender.com",
   });
 
   res.json({ accessToken });
@@ -128,12 +127,10 @@ const login = async (req, res) => {
   );
 
   res.cookie("jwt", refreshToken, {
-    path: "/",
     httpOnly: true,
     secure: true,
-    sameSite: "none",
+    sameSite: "None",
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    domain: ".onrender.com",
   });
 
   res.json({ accessToken });
