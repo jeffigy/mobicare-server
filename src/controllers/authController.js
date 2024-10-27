@@ -140,36 +140,38 @@ const login = async (req, res) => {
 
 const refresh = (req, res) => {
   const cookies = req.cookies;
-  console.log(cookies?.jwt);
-  if (!cookies?.jwt) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
+  console.log(req.cookies);
+  res.json({ cookies: req.cookies });
 
-  const refreshToken = cookies.jwt;
+  // if (!cookies?.jwt) {
+  //   return res.status(401).json({ message: "Unauthorized" });
+  // }
 
-  jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (error, decoded) => {
-    if (error) {
-      return res.status(403).json({ message: "Forbidden" });
-    }
+  // const refreshToken = cookies.jwt;
 
-    const foundUser = await User.findOne({ email: decoded.email }).exec();
+  // jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (error, decoded) => {
+  //   if (error) {
+  //     return res.status(403).json({ message: "Forbidden" });
+  //   }
 
-    if (!foundUser) {
-      return res.status(401).json({ message: "Unauthorized" });
-    }
+  //   const foundUser = await User.findOne({ email: decoded.email }).exec();
 
-    const accessToken = jwt.sign(
-      {
-        UserInfo: {
-          email: foundUser.email,
-          roles: foundUser.roles,
-        },
-      },
-      ACCESS_TOKEN_SECRET,
-      { expiresIn: "15m" }
-    );
-    res.json({ accessToken });
-  });
+  //   if (!foundUser) {
+  //     return res.status(401).json({ message: "Unauthorized" });
+  //   }
+
+  //   const accessToken = jwt.sign(
+  //     {
+  //       UserInfo: {
+  //         email: foundUser.email,
+  //         roles: foundUser.roles,
+  //       },
+  //     },
+  //     ACCESS_TOKEN_SECRET,
+  //     { expiresIn: "15m" }
+  //   );
+  //   res.json({ accessToken });
+  // });
 };
 
 const logout = (req, res) => {
