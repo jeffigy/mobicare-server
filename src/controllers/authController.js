@@ -52,7 +52,6 @@ const verifyEmail = async (req, res) => {
     secure: true,
     sameSite: "None",
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    path: "/",
   });
 
   res.json({ accessToken });
@@ -131,7 +130,6 @@ const login = async (req, res) => {
     secure: true,
     sameSite: "None",
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    path: "/",
   });
 
   res.json({ accessToken });
@@ -254,11 +252,6 @@ const resetPassword = async (req, res) => {
   res.json({ message: "Password successfully reset" });
 };
 
-const checkCookie = (req, res) => {
-  console.log("Cookies received:", req.cookies); // Log received cookies
-  res.json({ cookies: req.cookies });
-};
-
 module.exports = {
   verifyEmail,
   login,
@@ -266,5 +259,4 @@ module.exports = {
   logout,
   forgotPassword,
   resetPassword,
-  checkCookie,
 };
