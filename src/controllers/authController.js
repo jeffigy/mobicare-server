@@ -8,7 +8,6 @@ const {
   ACCESS_TOKEN_SECRET,
   REFRESH_TOKEN_SECRET,
 } = require("../utils/config");
-const path = require("path");
 
 const verifyEmail = async (req, res) => {
   const { token } = req.params;
@@ -141,37 +140,36 @@ const login = async (req, res) => {
 const refresh = (req, res) => {
   const cookies = req.cookies;
   console.log(req.cookies);
-  res.json({ cookies: req.cookies });
 
-  // if (!cookies?.jwt) {
-  //   return res.status(401).json({ message: "Unauthorized" });
-  // }
+  if (!cookies?.jwt) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
 
-  // const refreshToken = cookies.jwt;
+  const refreshToken = cookies.jwt;
 
-  // jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (error, decoded) => {
-  //   if (error) {
-  //     return res.status(403).json({ message: "Forbidden" });
-  //   }
+  jwt.verify(refreshToken, REFRESH_TOKEN_SECRET, async (error, decoded) => {
+    if (error) {
+      return res.status(403).json({ message: "Forbidden" });
+    }
 
-  //   const foundUser = await User.findOne({ email: decoded.email }).exec();
+    const foundUser = await User.findOne({ email: decoded.email }).exec();
 
-  //   if (!foundUser) {
-  //     return res.status(401).json({ message: "Unauthorized" });
-  //   }
+    if (!foundUser) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
 
-  //   const accessToken = jwt.sign(
-  //     {
-  //       UserInfo: {
-  //         email: foundUser.email,
-  //         roles: foundUser.roles,
-  //       },
-  //     },
-  //     ACCESS_TOKEN_SECRET,
-  //     { expiresIn: "15m" }
-  //   );
-  //   res.json({ accessToken });
-  // });
+    const accessToken = jwt.sign(
+      {
+        UserInfo: {
+          email: foundUser.email,
+          roles: foundUser.roles,
+        },
+      },
+      ACCESS_TOKEN_SECRET,
+      { expiresIn: "15m" }
+    );
+    res.json({ accessToken });
+  });
 };
 
 const logout = (req, res) => {
@@ -256,6 +254,11 @@ const resetPassword = async (req, res) => {
   res.json({ message: "Password successfully reset" });
 };
 
+const checkCookie = (req, res) => {
+  console.log("Cookies received:", req.cookies); // Log received cookies
+  res.json({ cookies: req.cookies });
+};
+
 module.exports = {
   verifyEmail,
   login,
@@ -263,4 +266,5 @@ module.exports = {
   logout,
   forgotPassword,
   resetPassword,
+  checkCookie,
 };

@@ -5,6 +5,7 @@ const {
   logout,
   forgotPassword,
   resetPassword,
+  checkCookie,
 } = require("../controllers/authController");
 const authRoutes = require("express").Router();
 
@@ -14,5 +15,6 @@ authRoutes.route("/refresh").get(refresh);
 authRoutes.route("/logout").post(logout);
 authRoutes.route("/forgot-password").post(forgotPassword);
 authRoutes.route("/reset-password/:token?").patch(resetPassword);
+authRoutes.route("/check-cookie").get(checkCookie);
 
 module.exports = authRoutes;
