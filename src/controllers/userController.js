@@ -4,10 +4,41 @@ const crypto = require("crypto");
 const sendVerificationEmail = require("../utils/sendVerficationEmail");
 
 const getAllUsers = async (req, res) => {
-  const { email } = req.query;
-  const users = await User.find({ email: { $ne: email } }).exec();
+  const { email, search = "" } = req.query;
+  console.log({ email, search });
+
+  const searchQuery = search
+    ? {
+        $or: [
+          {
+            name: {
+              $regex: search
+                .split(" ")
+                .join("|")
+                .replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+              $options: "i",
+            },
+          },
+          {
+            email: {
+              $regex: search
+                .split(" ")
+                .join("|")
+                .replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+              $options: "i",
+            },
+          },
+        ],
+      }
+    : {};
+
+  const users = await User.find({
+    email: { $ne: email },
+    ...searchQuery,
+  }).exec();
+
   if (users.length === 0) {
-    return res.status(400).json({ message: "No users found" });
+    return res.status(404).json({ message: "No users found" });
   }
 
   res.json(users);
