@@ -14,12 +14,6 @@ const getAllRepairs = async (req, res) => {
     ? {
         $or: [
           {
-            "customer.name": {
-              $regex: search.split(" ").join("|"),
-              $options: "i",
-            },
-          },
-          {
             "device.model": {
               $regex: search.split(" ").join("|"),
               $options: "i",
@@ -41,6 +35,10 @@ const getAllRepairs = async (req, res) => {
   const sortDateOrder = sortDate === "asc" ? 1 : -1;
 
   const repairs = await Repair.find(query)
+    .populate("user", {
+      name: 1,
+      id: 1,
+    })
     .sort({ createdAt: sortDateOrder })
     .skip(skip)
     .limit(parseInt(limit));
@@ -66,6 +64,7 @@ const newRepair = async (req, res) => {
     problemDescription: { issueCategory, details },
     // additionalInfo: { images },
     status,
+    user,
   } = req.body;
 
   if (
@@ -77,7 +76,8 @@ const newRepair = async (req, res) => {
     !model ||
     !imeiOrSerialNumber ||
     !issueCategory ||
-    !details
+    !details ||
+    !user
   ) {
     return res.status(400).json({ message: "Some inputs are missing" });
   }
@@ -98,6 +98,7 @@ const newRepair = async (req, res) => {
     problemDescription: { issueCategory, details },
     // additionalInfo: { images },
     status,
+    user,
   });
 
   if (newRepair) {
@@ -118,6 +119,7 @@ const updateRepair = async (req, res) => {
     device: { type, brand, model, imeiOrSerialNumber },
     problemDescription: { issueCategory, details },
     status,
+    user,
   } = req.body;
 
   if (
@@ -130,7 +132,8 @@ const updateRepair = async (req, res) => {
     !model ||
     !imeiOrSerialNumber ||
     !issueCategory ||
-    !details
+    !details ||
+    !user
   ) {
     return res.status(400).json({ message: "Some inputs are missing" });
   }
@@ -158,6 +161,7 @@ const updateRepair = async (req, res) => {
     device: { type, brand, model, imeiOrSerialNumber },
     problemDescription: { issueCategory, details },
     status,
+    user,
   });
 
   if (!updatedRepair) {

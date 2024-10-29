@@ -1,6 +1,12 @@
 const { model, Schema } = require("mongoose");
 const { transformToJSON } = require("../utils/mongooseUtils");
+
 const repairSchema = new Schema({
+  user: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
+  },
   customer: {
     name: {
       type: String,
